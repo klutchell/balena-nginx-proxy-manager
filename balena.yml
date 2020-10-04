@@ -1,0 +1,2 @@
+applicationEnvironmentVariables:
+    - MYSQL_ROOT_PASSWORD: 'mysecretpassword'

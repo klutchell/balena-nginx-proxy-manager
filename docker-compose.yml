@@ -1,0 +1,57 @@
+version: "2.1"
+
+volumes:
+  proxy:
+  certs:
+  db:
+  duplicati:
+
+services:
+  # https://hub.docker.com/r/jc21/nginx-proxy-manager/
+  proxy:
+    build: proxy
+    ports:
+      - 80:80/tcp
+      - 81:81/tcp
+      - 443:443/tcp
+    volumes:
+      - proxy:/data
+      - certs:/etc/letsencrypt
+    depends_on:
+      - db
+
+  # https://hub.docker.com/_/mariadb/
+  db:
+    build: mariadb
+    volumes:
+      - db:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: "npm"
+      MYSQL_USER: "npm"
+      MYSQL_PASSWORD: "npm"
+
+  # https://hub.docker.com/_/mariadb/
+  sqldump:
+    build: mariadb
+    command: "/sqldump.sh"
+    environment:
+      MYSQL_DATABASE: "npm"
+    volumes:
+      - db:/var/lib/mysql
+    depends_on:
+      - db
+
+  # https://hub.docker.com/r/linuxserver/duplicati
+  duplicati:
+    image: linuxserver/duplicati:arm64v8-latest
+    environment:
+      PUID: "0"
+      PGID: "0"
+      CLI_ARGS: --webservice-interface=any
+    ports:
+      - 8200:8200/tcp
+    volumes:
+      - duplicati:/config
+      - proxy:/source/proxy
+      - certs:/source/certs
+      - db:/source/db
