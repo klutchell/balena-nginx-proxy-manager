@@ -10,10 +10,7 @@ services:
   # https://hub.docker.com/r/jc21/nginx-proxy-manager/
   proxy:
     build: proxy
-    ports:
-      - 80:80/tcp
-      - 81:81/tcp
-      - 443:443/tcp
+    network_mode: host
     volumes:
       - proxy:/data
       - certs:/etc/letsencrypt
@@ -29,6 +26,8 @@ services:
       MYSQL_DATABASE: "npm"
       MYSQL_USER: "npm"
       MYSQL_PASSWORD: "npm"
+    ports:
+      - '3306:3306'
 
   # https://hub.docker.com/_/mariadb/
   sqldump:

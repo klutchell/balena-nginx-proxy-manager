@@ -1,7 +1,7 @@
 {
 	"database": {
 		"engine": "mysql",
-		"host": "db",
+		"host": "127.0.0.1",
 		"name": "npm",
 		"user": "npm",
 		"password": "npm",
